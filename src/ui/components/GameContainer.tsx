@@ -120,12 +120,13 @@ export function GameContainer() {
 
   return (
     <div className="game-container">
-      {/* Hidden video element for camera feed */}
+      {/* Visible video element for camera feed (background layer) */}
       <video
         ref={videoRef}
         className="camera-video"
         playsInline
         muted
+        autoPlay
       />
 
       {/* Main game canvas */}

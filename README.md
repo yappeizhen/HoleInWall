@@ -81,10 +81,10 @@ npm run preview
 
 ## Deployment
 
-### Vercel
+### Vercel (Recommended)
 
 1. Push to GitHub
-2. Import project in [Vercel](https://vercel.com)
+2. Import project in Vercel
 3. Deploy!
 
 Or use the Vercel CLI:
@@ -93,7 +93,12 @@ Or use the Vercel CLI:
 npx vercel
 ```
 
-The project includes a `vercel.json` config for automatic setup.
+### Netlify
+
+```bash
+npm run build
+# Deploy the `dist` folder
+```
 
 ## Future Roadmap
 
