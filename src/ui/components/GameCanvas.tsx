@@ -73,114 +73,104 @@ function drawTargetOutline(
   centerX: number,
   centerY: number
 ) {
-  // Outline grows slightly as the wall approaches
+  // Build a forgiving bounding capsule instead of precise keypoint outline.
+  const paddedBounds = getPaddedBounds(targetShape.landmarks, 0.2)
   const outlineScale = 0.85 + progress * 0.4
   const strokeWidth = 6 + progress * 6
+
+  const width = paddedBounds.width * scale * outlineScale
+  const height = paddedBounds.height * scale * outlineScale
+
+  // Transform center to screen space
+  const boxCenter = {
+    x: centerX + (0.5 - paddedBounds.centerX) * scale,
+    y: centerY + (paddedBounds.centerY - 0.5) * scale,
+  }
 
   ctx.save()
   ctx.lineWidth = strokeWidth
   ctx.strokeStyle = 'rgba(0, 245, 255, 0.9)'
   ctx.shadowColor = '#00f5ff'
   ctx.shadowBlur = 25 + progress * 40
-  ctx.globalAlpha = 0.95
+  ctx.globalAlpha = 0.9
   ctx.setLineDash([18, 10])
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
 
-  drawGingerbreadOutline(ctx, targetShape.landmarks, scale * outlineScale, centerX, centerY, scale * 0.045)
+  drawRoundedBox(ctx, boxCenter.x, boxCenter.y, width, height, Math.min(width, height) * 0.18)
   ctx.restore()
 }
 
-// Draw a rounded gingerbread outline (arms/legs/head) as one composed path
-function drawGingerbreadOutline(
-  ctx: CanvasRenderingContext2D,
-  landmarks: Landmark[],
-  scale: number,
-  centerX: number,
-  centerY: number,
-  baseThickness: number
-) {
-  // Compress vertical space so targets are framed as half/three-quarter body.
-  // This keeps the outline inside a typical laptop webcam view (less floor, more torso).
-  const verticalCompression = 0.72
-  const verticalOffset = 0.12
-
-  const getPos = (idx: number) => {
-    const lm = landmarks[idx]
-    if (!lm) return null
+function getPaddedBounds(landmarks: Landmark[], padding: number) {
+  const usable = landmarks.filter((lm) => lm && (lm.visibility ?? 1) > 0.2)
+  if (usable.length === 0) {
     return {
-      x: centerX + (0.5 - lm.x) * scale,
-      y: centerY + ((lm.y - 0.5) * verticalCompression + verticalOffset) * scale,
+      minX: 0.35,
+      maxX: 0.65,
+      minY: 0.25,
+      maxY: 0.75,
+      centerX: 0.5,
+      centerY: 0.5,
+      width: 0.3,
+      height: 0.5,
     }
   }
 
-  const nose = getPos(POSE_LANDMARKS.NOSE)
-  const leftShoulder = getPos(POSE_LANDMARKS.LEFT_SHOULDER)
-  const rightShoulder = getPos(POSE_LANDMARKS.RIGHT_SHOULDER)
-  const leftWrist = getPos(POSE_LANDMARKS.LEFT_WRIST)
-  const rightWrist = getPos(POSE_LANDMARKS.RIGHT_WRIST)
-  const leftHip = getPos(POSE_LANDMARKS.LEFT_HIP)
-  const rightHip = getPos(POSE_LANDMARKS.RIGHT_HIP)
+  let minX = Infinity
+  let maxX = -Infinity
+  let minY = Infinity
+  let maxY = -Infinity
 
-  if (!nose || !leftShoulder || !rightShoulder || !leftHip || !rightHip) return
+  usable.forEach((lm) => {
+    minX = Math.min(minX, lm.x)
+    maxX = Math.max(maxX, lm.x)
+    minY = Math.min(minY, lm.y)
+    maxY = Math.max(maxY, lm.y)
+  })
 
-  const headRadius = scale * 0.08 + baseThickness * 0.6
-  const armRadius = scale * 0.045 + baseThickness * 0.5
-  const torsoRadius = scale * 0.09 + baseThickness * 0.7
+  const width = maxX - minX
+  const height = maxY - minY
+  const padX = width * padding
+  const padY = height * padding
 
-  const torsoTop = {
-    x: (leftShoulder.x + rightShoulder.x) / 2,
-    y: (leftShoulder.y + rightShoulder.y) / 2,
+  minX = Math.max(0, minX - padX)
+  maxX = Math.min(1, maxX + padX)
+  minY = Math.max(0, minY - padY)
+  maxY = Math.min(1, maxY + padY)
+
+  return {
+    minX,
+    maxX,
+    minY,
+    maxY,
+    centerX: (minX + maxX) / 2,
+    centerY: (minY + maxY) / 2,
+    width: Math.max(0.25, maxX - minX),
+    height: Math.max(0.35, maxY - minY),
   }
-  const torsoBottom = {
-    x: (leftHip.x + rightHip.x) / 2,
-    y: (leftHip.y + rightHip.y) / 2,
-  }
-
-  ctx.beginPath()
-
-  // Head
-  ctx.moveTo(nose.x + headRadius, nose.y - headRadius * 0.35)
-  ctx.arc(nose.x, nose.y - headRadius * 0.35, headRadius, 0, Math.PI * 2)
-
-  // Torso
-  addCapsulePath(ctx, torsoTop, torsoBottom, torsoRadius)
-
-  // Arms
-  if (leftWrist) addCapsulePath(ctx, leftShoulder, leftWrist, armRadius)
-  if (rightWrist) addCapsulePath(ctx, rightShoulder, rightWrist, armRadius)
-
-  ctx.stroke()
 }
 
-function addCapsulePath(
+function drawRoundedBox(
   ctx: CanvasRenderingContext2D,
-  a: { x: number; y: number },
-  b: { x: number; y: number },
-  r: number
+  cx: number,
+  cy: number,
+  width: number,
+  height: number,
+  radius: number
 ) {
-  const dx = b.x - a.x
-  const dy = b.y - a.y
-  const len = Math.sqrt(dx * dx + dy * dy)
-  if (len < 1) {
-    ctx.moveTo(a.x + r, a.y)
-    ctx.arc(a.x, a.y, r, 0, Math.PI * 2)
-    return
-  }
-  const angle = Math.atan2(dy, dx)
+  const x = cx - width / 2
+  const y = cy - height / 2
+  const r = Math.min(radius, width / 2, height / 2)
 
-  ctx.moveTo(
-    a.x + Math.cos(angle + Math.PI / 2) * r,
-    a.y + Math.sin(angle + Math.PI / 2) * r
-  )
-  ctx.arc(a.x, a.y, r, angle + Math.PI / 2, angle - Math.PI / 2)
-  ctx.lineTo(
-    b.x + Math.cos(angle - Math.PI / 2) * r,
-    b.y + Math.sin(angle - Math.PI / 2) * r
-  )
-  ctx.arc(b.x, b.y, r, angle - Math.PI / 2, angle + Math.PI / 2)
-  ctx.lineTo(
-    a.x + Math.cos(angle + Math.PI / 2) * r,
-    a.y + Math.sin(angle + Math.PI / 2) * r
-  )
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.lineTo(x + width - r, y)
+  ctx.quadraticCurveTo(x + width, y, x + width, y + r)
+  ctx.lineTo(x + width, y + height - r)
+  ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height)
+  ctx.lineTo(x + r, y + height)
+  ctx.quadraticCurveTo(x, y + height, x, y + height - r)
+  ctx.lineTo(x, y + r)
+  ctx.quadraticCurveTo(x, y, x + r, y)
+  ctx.stroke()
 }

@@ -11,16 +11,12 @@ interface MatchResult {
 const LANDMARK_WEIGHTS: Record<number, number> = {
   [POSE_LANDMARKS.LEFT_SHOULDER]: 1.5,
   [POSE_LANDMARKS.RIGHT_SHOULDER]: 1.5,
-  [POSE_LANDMARKS.LEFT_ELBOW]: 1.2,
-  [POSE_LANDMARKS.RIGHT_ELBOW]: 1.2,
-  [POSE_LANDMARKS.LEFT_WRIST]: 1.0,
-  [POSE_LANDMARKS.RIGHT_WRIST]: 1.0,
-  [POSE_LANDMARKS.LEFT_HIP]: 1.3,
-  [POSE_LANDMARKS.RIGHT_HIP]: 1.3,
-  [POSE_LANDMARKS.LEFT_KNEE]: 1.1,
-  [POSE_LANDMARKS.RIGHT_KNEE]: 1.1,
-  [POSE_LANDMARKS.LEFT_ANKLE]: 0.8,
-  [POSE_LANDMARKS.RIGHT_ANKLE]: 0.8,
+  [POSE_LANDMARKS.LEFT_ELBOW]: 1.3,
+  [POSE_LANDMARKS.RIGHT_ELBOW]: 1.3,
+  [POSE_LANDMARKS.LEFT_WRIST]: 1.1,
+  [POSE_LANDMARKS.RIGHT_WRIST]: 1.1,
+  [POSE_LANDMARKS.LEFT_HIP]: 1.0,
+  [POSE_LANDMARKS.RIGHT_HIP]: 1.0,
 }
 
 // Calculate distance between two landmarks (normalized 0-1 space)
@@ -83,6 +79,11 @@ export const comparePoses = (
 
   let totalScore = 0
   let totalWeight = 0
+  let coverageHits = 0
+  let coverageTotal = 0
+
+  // Outline-style coverage: treat inside a padded bounding box as a fit.
+  const bounds = getPaddedBounds(normalizedTarget, tolerance * 2)
 
   // Compare key landmarks
   for (const landmarkIndex of KEY_LANDMARKS) {
@@ -103,15 +104,61 @@ export const comparePoses = (
     landmarkScores.set(landmarkIndex, score)
     totalScore += score * weight
     totalWeight += weight
+
+    coverageTotal += 1
+    if (isInsideBounds(playerLm, bounds)) {
+      coverageHits += 1
+    }
   }
 
-  const finalScore = totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0
+  const weightedScore = totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0
+  const coverageScore = coverageTotal > 0 ? (coverageHits / coverageTotal) * 100 : 0
+
+  // Blend precision with coverage; emphasize coverage so "inside the outline" counts.
+  const finalScore = weightedScore * 0.4 + coverageScore * 0.6
+
+  // A match requires most key points inside the forgiving outline and a modest blended score.
+  const isMatch = coverageScore >= 70 && finalScore >= 55
 
   return {
     score: Math.round(finalScore),
-    isMatch: finalScore >= 70,
+    isMatch,
     landmarkScores,
   }
+}
+
+function getPaddedBounds(landmarks: Landmark[], padding: number) {
+  const usable = landmarks.filter((lm) => lm && (lm.visibility ?? 1) > 0.2)
+  if (!usable.length) {
+    return { minX: 0.35, maxX: 0.65, minY: 0.25, maxY: 0.75 }
+  }
+  let minX = Infinity
+  let maxX = -Infinity
+  let minY = Infinity
+  let maxY = -Infinity
+
+  usable.forEach((lm) => {
+    minX = Math.min(minX, lm.x)
+    maxX = Math.max(maxX, lm.x)
+    minY = Math.min(minY, lm.y)
+    maxY = Math.max(maxY, lm.y)
+  })
+
+  const width = maxX - minX
+  const height = maxY - minY
+  const padX = width * padding
+  const padY = height * padding
+
+  return {
+    minX: Math.max(0, minX - padX),
+    maxX: Math.min(1, maxX + padX),
+    minY: Math.max(0, minY - padY),
+    maxY: Math.min(1, maxY + padY),
+  }
+}
+
+function isInsideBounds(lm: Landmark, bounds: { minX: number; maxX: number; minY: number; maxY: number }) {
+  return lm.x >= bounds.minX && lm.x <= bounds.maxX && lm.y >= bounds.minY && lm.y <= bounds.maxY
 }
 
 // Get match quality description

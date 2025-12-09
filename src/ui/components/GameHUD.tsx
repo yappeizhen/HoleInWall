@@ -10,6 +10,7 @@ interface GameHUDProps {
 
 export function GameHUD({ round, score, lives, matchScore, wallProgress }: GameHUDProps) {
   const timeRemaining = Math.max(0, Math.ceil((1 - wallProgress) * 100))
+  const matchQuality = getMatchQuality(matchScore)
 
   return (
     <div className="game-hud">
@@ -53,7 +54,12 @@ export function GameHUD({ round, score, lives, matchScore, wallProgress }: GameH
 
       {/* Match indicator */}
       <div className="hud-match">
-        <div className="match-ring" data-quality={getMatchQuality(matchScore)}>
+        <div className="match-status" data-quality={matchQuality}>
+          <span className="match-status__dot" />
+          <span className="match-status__text">{getMatchStatusText(matchScore)}</span>
+        </div>
+
+        <div className="match-ring" data-quality={matchQuality}>
           <span className="match-score font-display">{matchScore}%</span>
         </div>
         <span className="match-label">{getMatchLabel(matchScore)}</span>
@@ -73,5 +79,12 @@ function getMatchLabel(score: number): string {
   if (score >= 70) return 'GOOD!'
   if (score >= 50) return 'CLOSE...'
   return 'KEEP MOVING!'
+}
+
+function getMatchStatusText(score: number): string {
+  if (score >= 85) return 'Aligned!'
+  if (score >= 70) return 'Almost there'
+  if (score >= 50) return 'Adjust a bit'
+  return 'Keep matching...'
 }
 
