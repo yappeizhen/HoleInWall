@@ -220,7 +220,7 @@ function App() {
     <div className="app">
       <header className="topbar">
         <div className="branding">
-          <h1>Shapeshift</h1>
+          <h1>Hole In Wall</h1>
           <p className="subtitle">Fit yourself within the shape before time runs out</p>
         </div>
         <div className="actions">
@@ -264,7 +264,7 @@ function App() {
           <div className="start-overlay">
             <div className="start-card">
               <p className="eyebrow">Ready?</p>
-              <h2>Shapeshift Game</h2>
+              <h2>Hole In Wall Game</h2>
               <p className="helper">
                 Stand where the camera can see you. When you hit start, match the glowing shapes
                 before time runs out.
