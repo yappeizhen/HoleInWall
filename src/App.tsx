@@ -148,7 +148,7 @@ function App() {
       try {
         await videoRef.current.play()
       } catch {
-        // Ignore autoplay failures; user can interact again
+        // Ignore autoplay failures
       }
     }
     setShapeIndex(0)
@@ -156,34 +156,35 @@ function App() {
     setGameState('countdown')
   }
 
-  const statusText =
-    gameState === 'countdown'
-      ? `Hold the shape in ${countdown}s`
-      : gameState === 'feedback'
-        ? fitResult?.pass
-          ? 'Nice fit!'
-          : 'Missed it'
-        : 'Press start to play'
+  const getStatusText = () => {
+    if (gameState === 'countdown') return 'Get into position!'
+    if (gameState === 'feedback') {
+      return fitResult?.pass ? 'Nice work!' : 'Almost there!'
+    }
+    return 'Ready to play'
+  }
 
   return (
     <div className="app">
       <header className="topbar">
-      <div>
+        <div className="branding">
           <h1>Shapeshift</h1>
-          <p className="subtitle">
-            Align yourself inside the glowing outline before the timer ends.
-          </p>
-      </div>
+          <p className="subtitle">Match the shape before time runs out</p>
+        </div>
         <div className="actions">
-          <button className="primary" onClick={handleStart} disabled={!streamReady}>
-            {gameState === 'idle' ? 'Start' : 'Restart'}
-        </button>
           <div className="pill">
             <span className="label">Shape</span>
             <span className="value">
-              {shapeIndex + 1}/{shapes.length} • {shapes[shapeIndex].name}
+              {shapeIndex + 1}/{shapes.length}
             </span>
           </div>
+          <button
+            className="primary"
+            onClick={handleStart}
+            disabled={!streamReady}
+          >
+            {gameState === 'idle' ? 'Start Game' : 'Restart'}
+          </button>
         </div>
       </header>
 
@@ -202,19 +203,22 @@ function App() {
         <div className="info-row">
           <div className="pill">
             <span className="label">Status</span>
-            <span className="value">{statusText}</span>
+            <span className="value">{getStatusText()}</span>
           </div>
           <div className="pill">
-            <span className="label">Fit</span>
-            <span className={`value ${fitResult?.pass ? 'positive' : ''}`}>
+            <span className="label">Accuracy</span>
+            <span
+              className={`value ${fitResult?.pass ? 'positive' : ''} ${fitResult && !fitResult.pass ? 'negative' : ''}`}
+            >
               {fitResult ? `${Math.round(fitResult.insideRatio * 100)}%` : '—'}
             </span>
           </div>
-          {cameraError && <span className="error">Camera error: {cameraError}</span>}
+          {cameraError && (
+            <span className="error">Camera error: {cameraError}</span>
+          )}
         </div>
         <p className="helper">
-          Tip: keep upper body in frame; stretch creatively as long as all keypoints
-          stay inside the outline.
+          Position yourself so all body points fit inside the glowing outline
         </p>
       </footer>
     </div>

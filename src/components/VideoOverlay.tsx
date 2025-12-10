@@ -39,7 +39,7 @@ export function VideoOverlay({
 
     ctx.clearRect(0, 0, width, height)
 
-    drawShape(ctx, shape, width, height)
+    drawShape(ctx, shape, width, height, gameState, fitResult)
     drawKeypoints(ctx, keypoints, width, height)
   }, [shape, countdown, gameState, fitResult, keypoints, videoRef])
 
@@ -47,12 +47,19 @@ export function VideoOverlay({
     <div className="viewer">
       <video ref={videoRef} className="video" autoPlay playsInline muted />
       <canvas ref={canvasRef} className="overlay" />
-      <div className="countdown-badge">
-        <span className="clock-icon" aria-hidden />
-        <span className="value">
-          {gameState === 'countdown' ? `${countdown}s` : '...'}
-        </span>
-      </div>
+      
+      {gameState === 'countdown' && (
+        <div className="countdown-badge">
+          <span className="clock-icon" aria-hidden />
+          <span className="value">{countdown}s</span>
+        </div>
+      )}
+      
+      {gameState === 'feedback' && fitResult && (
+        <div className={`feedback-badge ${fitResult.pass ? 'success' : 'fail'}`}>
+          {fitResult.pass ? 'Perfect!' : 'Try Again'}
+        </div>
+      )}
     </div>
   )
 }
@@ -62,13 +69,30 @@ function drawShape(
   shape: ShapeConfig,
   width: number,
   height: number,
+  gameState: GameState,
+  fitResult: FitResult | null,
 ) {
   ctx.save()
   ctx.beginPath()
-  ctx.shadowColor = 'rgba(0, 255, 180, 0.65)'
-  ctx.shadowBlur = 30
-  ctx.lineWidth = 6
-  ctx.strokeStyle = 'rgba(0, 255, 200, 0.9)'
+  
+  // Dynamic glow based on game state
+  let glowColor = 'rgba(0, 245, 212, 0.6)'
+  let strokeColor = 'rgba(0, 245, 212, 0.9)'
+  
+  if (gameState === 'feedback' && fitResult) {
+    if (fitResult.pass) {
+      glowColor = 'rgba(0, 245, 212, 0.8)'
+      strokeColor = 'rgba(0, 245, 212, 1)'
+    } else {
+      glowColor = 'rgba(255, 42, 109, 0.8)'
+      strokeColor = 'rgba(255, 42, 109, 1)'
+    }
+  }
+  
+  ctx.shadowColor = glowColor
+  ctx.shadowBlur = 40
+  ctx.lineWidth = 4
+  ctx.strokeStyle = strokeColor
 
   if (shape.kind === 'circle') {
     ctx.arc(
@@ -98,6 +122,13 @@ function drawShape(
   }
 
   ctx.stroke()
+  
+  // Draw second stroke for extra glow effect
+  ctx.shadowBlur = 80
+  ctx.lineWidth = 2
+  ctx.globalAlpha = 0.5
+  ctx.stroke()
+  
   ctx.restore()
 }
 
@@ -128,12 +159,28 @@ function drawKeypoints(
   height: number,
 ) {
   ctx.save()
-  ctx.fillStyle = '#8ae2ff'
+  
   keypoints.forEach((kp) => {
+    const score = kp.score ?? 0
+    if (score < 0.3) return
+    
+    const x = kp.x * width
+    const y = kp.y * height
+    
+    // Outer glow
     ctx.beginPath()
-    ctx.arc(kp.x * width, kp.y * height, 4, 0, Math.PI * 2)
+    ctx.arc(x, y, 8, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(173, 216, 255, 0.3)'
+    ctx.fill()
+    
+    // Inner dot
+    ctx.beginPath()
+    ctx.arc(x, y, 4, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(173, 216, 255, 0.9)'
+    ctx.shadowColor = 'rgba(173, 216, 255, 0.8)'
+    ctx.shadowBlur = 10
     ctx.fill()
   })
+  
   ctx.restore()
 }
-
