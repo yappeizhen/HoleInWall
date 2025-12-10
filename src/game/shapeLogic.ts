@@ -111,47 +111,56 @@ function makeBubbleT(): ShapeConfig {
 }
 
 function makeBubbleY(): ShapeConfig {
-  const top = 0.52
-  const junction = 0.64
+  const top = 0.2
+  const junction = 0.5
   const bottom = FLOOR_Y
   return {
     id: 'shape-y',
     name: 'Bubble Y',
     kind: 'polygon',
     points: [
-      { x: 0.24, y: top },
+      { x: 0.22, y: top },
       { x: 0.44, y: junction },
       { x: 0.44, y: bottom },
       { x: 0.56, y: bottom },
       { x: 0.56, y: junction },
-      { x: 0.76, y: top },
+      { x: 0.78, y: top },
       { x: 0.64, y: top },
-      { x: 0.50, y: 0.66 },
+      { x: 0.50, y: 0.38 },
       { x: 0.36, y: top },
     ],
   }
 }
 
 function makeBubbleF(): ShapeConfig {
-  const top = 0.32
+  const top = 0.26
   const mid = 0.48
-  const low = 0.62
+  const low = 0.7
+  const bar = 0.09
+  const left = 0.32
+  const stemRight = 0.44
+  const topBarRight = 0.70
+  const midBarRight = 0.60
   const bottom = FLOOR_Y
   return {
     id: 'shape-f',
     name: 'Bubble F',
     kind: 'polygon',
     points: [
-      { x: 0.14, y: top },
-      { x: 0.68, y: top },
-      { x: 0.70, y: 0.4 },
-      { x: 0.41, y: 0.4 },
-      { x: 0.41, y: mid },
-      { x: 0.65, y: mid },
-      { x: 0.65, y: low },
-      { x: 0.36, y: low },
-      { x: 0.36, y: bottom },
-      { x: 0.14, y: bottom },
+      { x: left, y: top },                 // start top-left
+      { x: topBarRight, y: top },          // top bar outer right
+      { x: topBarRight, y: top + bar },    // top bar thickness
+      { x: stemRight, y: top + bar },      // back to stem width
+      { x: stemRight, y: mid - bar / 2 },  // down to mid bar start
+      { x: midBarRight, y: mid - bar / 2 },
+      { x: midBarRight, y: mid + bar / 2 },// mid bar thickness
+      { x: stemRight, y: mid + bar / 2 },
+      { x: stemRight, y: low },            // down to lower junction
+      { x: left, y: low },                 // across to stem left
+      { x: left, y: bottom },              // drop to floor
+      { x: stemRight, y: bottom },         // short foot along floor
+      { x: stemRight, y: low },            // back up to avoid closing bottom
+      { x: left, y: low },                 // return to stem left
     ],
   }
 }
