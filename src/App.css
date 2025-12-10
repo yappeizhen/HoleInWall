@@ -251,15 +251,16 @@ h1 {
 .hud-block {
   pointer-events: none;
   background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(0, 245, 212, 0.35);
+  border: 1px solid rgba(180, 120, 255, 0.45);
   border-radius: 14px;
-  padding: 10px 14px;
+  padding: 12px 14px;
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(0, 245, 212, 0.15);
+    0 0 30px rgba(180, 120, 255, 0.2);
   backdrop-filter: blur(10px);
   min-width: 120px;
   max-width: 220px;
+  min-height: 54px;
 }
 
 .hud-hearts {
@@ -309,8 +310,8 @@ h1 {
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--neon-cyan);
-  text-shadow: 0 0 16px rgba(0, 245, 212, 0.35);
+  color: #efe4ff;
+  text-shadow: 0 0 16px rgba(180, 120, 255, 0.35);
 }
 
 .sr-only {
@@ -384,66 +385,56 @@ h1 {
 /* ===== COUNTDOWN BADGE ===== */
 .countdown-badge {
   position: absolute;
-  top: 20px;
+  top: 12px;
   left: 50%;
   transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 20px;
-  border-radius: 100px;
-  background: rgba(0, 0, 0, 0.7);
-  border: 2px solid rgba(255, 42, 109, 0.5);
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(180, 120, 255, 0.45);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(255, 42, 109, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
+    0 10px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(180, 120, 255, 0.2);
+  backdrop-filter: blur(10px);
   pointer-events: none;
   z-index: 10;
-  animation: badge-pulse 2s ease-in-out infinite;
-}
-
-@keyframes badge-pulse {
-  0%, 100% { 
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.4),
-      0 0 30px rgba(255, 42, 109, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-  50% { 
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.4),
-      0 0 50px rgba(255, 42, 109, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
+  min-height: 56px;
 }
 
 .countdown-badge .value {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.1rem;
-  color: white;
+  font-size: 1.15rem;
+  color: #efe4ff;
   letter-spacing: 0.05em;
   min-width: 3ch;
   text-align: center;
+  text-shadow: 0 0 16px rgba(180, 120, 255, 0.35);
 }
 
 .clock-icon {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 2px solid var(--neon-pink);
+  border: 2px solid rgba(180, 120, 255, 0.9);
   position: relative;
-  box-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
-  background: radial-gradient(circle at 50% 45%, rgba(255, 42, 109, 0.3), transparent 70%);
+  box-shadow:
+    0 0 8px rgba(180, 120, 255, 0.65),
+    0 0 14px rgba(255, 107, 214, 0.35);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(180, 120, 255, 0.42), transparent 62%),
+    radial-gradient(circle at 50% 55%, rgba(255, 107, 214, 0.2), transparent 70%),
+    #061018;
 }
 
 .clock-icon::before,
 .clock-icon::after {
   content: '';
   position: absolute;
-  background: white;
+  background: #efe4ff;
   left: 50%;
   top: 50%;
   transform-origin: 50% 0%;
