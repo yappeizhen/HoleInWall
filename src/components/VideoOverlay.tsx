@@ -70,24 +70,17 @@ function drawShape(
   width: number,
   height: number,
   gameState: GameState,
-  fitResult: FitResult | null,
+  _fitResult: FitResult | null,
 ) {
+  // Hide outline during feedback to let the badge take focus
+  if (gameState === 'feedback') return
+  
   ctx.save()
   ctx.beginPath()
   
-  // Dynamic glow based on game state
-  let glowColor = 'rgba(0, 245, 212, 0.6)'
-  let strokeColor = 'rgba(0, 245, 212, 0.9)'
-  
-  if (gameState === 'feedback' && fitResult) {
-    if (fitResult.pass) {
-      glowColor = 'rgba(0, 245, 212, 0.8)'
-      strokeColor = 'rgba(0, 245, 212, 1)'
-    } else {
-      glowColor = 'rgba(255, 42, 109, 0.8)'
-      strokeColor = 'rgba(255, 42, 109, 1)'
-    }
-  }
+  // Neon purple outline during countdown - matches theme, distinct from success/fail
+  const glowColor = 'rgba(181, 55, 242, 0.7)'
+  const strokeColor = 'rgba(200, 100, 255, 1)'
   
   ctx.shadowColor = glowColor
   ctx.shadowBlur = 40
