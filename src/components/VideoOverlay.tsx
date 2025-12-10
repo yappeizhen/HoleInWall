@@ -78,9 +78,9 @@ function drawShape(
   ctx.save()
   ctx.beginPath()
   
-  // Neon purple outline during countdown - matches theme, distinct from success/fail
-  const glowColor = 'rgba(181, 55, 242, 0.7)'
-  const strokeColor = 'rgba(200, 100, 255, 1)'
+  // Neon blue/cyan outline during countdown
+  const glowColor = 'rgba(5, 217, 232, 0.6)'
+  const strokeColor = 'rgba(5, 217, 232, 0.95)'
   
   ctx.shadowColor = glowColor
   ctx.shadowBlur = 40

@@ -169,7 +169,7 @@ function App() {
       <header className="topbar">
         <div className="branding">
           <h1>Shapeshift</h1>
-          <p className="subtitle">Match the shape before time runs out</p>
+          <p className="subtitle">Fit yourself within the shape before time runs out</p>
         </div>
         <div className="actions">
           <div className="pill">

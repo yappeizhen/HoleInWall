@@ -1,17 +1,15 @@
 #root {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   position: relative;
   z-index: 2;
 }
 
 .app {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 20px;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  row-gap: 16px;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* ===== HEADER ===== */
@@ -22,12 +20,9 @@
   gap: 16px;
   background: var(--bg-card);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 245, 212, 0.2);
-  border-radius: 20px;
-  padding: 16px 24px;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 245, 212, 0.2);
+  padding: 12px 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
 .topbar .branding {
@@ -158,25 +153,18 @@ h1 {
 .stage {
   display: flex;
   flex-direction: column;
-  flex: 1;
   min-height: 0;
+  overflow: hidden;
+  position: relative;
 }
 
 .viewer {
   position: relative;
   width: 100%;
   height: 100%;
-  max-height: calc(100vh - 200px);
-  min-height: 300px;
-  background: linear-gradient(180deg, rgba(12, 18, 32, 0.9) 0%, rgba(3, 5, 8, 0.95) 100%);
-  border-radius: 24px;
+  min-height: 0;
+  background: #000;
   overflow: hidden;
-  border: 2px solid rgba(0, 245, 212, 0.25);
-  flex: 1;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.5),
-    0 0 100px rgba(0, 245, 212, 0.05),
-    inset 0 0 100px rgba(0, 0, 0, 0.3);
 }
 
 .viewer::before {
@@ -184,8 +172,8 @@ h1 {
   position: absolute;
   inset: 0;
   background: 
-    linear-gradient(180deg, rgba(0, 245, 212, 0.03) 0%, transparent 30%),
-    linear-gradient(0deg, rgba(255, 42, 109, 0.03) 0%, transparent 30%);
+    linear-gradient(180deg, rgba(0, 245, 212, 0.02) 0%, transparent 20%),
+    linear-gradient(0deg, rgba(255, 42, 109, 0.02) 0%, transparent 20%);
   pointer-events: none;
   z-index: 2;
 }
@@ -196,9 +184,9 @@ h1 {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 50px 50px;
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
   z-index: 3;
 }
 
@@ -324,13 +312,13 @@ h1 {
 }
 
 .feedback-badge.success {
-  background: rgba(0, 245, 212, 0.2);
-  border: 3px solid var(--neon-cyan);
-  color: var(--neon-cyan);
+  background: rgba(50, 255, 150, 0.2);
+  border: 3px solid #32ff96;
+  color: #32ff96;
   box-shadow: 
-    0 0 60px rgba(0, 245, 212, 0.4),
-    inset 0 0 30px rgba(0, 245, 212, 0.1);
-  text-shadow: 0 0 30px rgba(0, 245, 212, 0.8);
+    0 0 60px rgba(50, 255, 150, 0.4),
+    inset 0 0 30px rgba(50, 255, 150, 0.1);
+  text-shadow: 0 0 30px rgba(50, 255, 150, 0.8);
 }
 
 .feedback-badge.fail {
@@ -358,7 +346,11 @@ h1 {
 .footer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(0, 245, 212, 0.2);
+  padding: 12px 24px;
 }
 
 .info-row {
@@ -368,13 +360,13 @@ h1 {
 }
 
 .helper {
-  margin: 4px 0 0 0;
+  margin: 0;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .error {
-  padding: 10px 16px;
+  padding: 8px 14px;
   border-radius: 100px;
   background: rgba(255, 42, 109, 0.15);
   border: 1px solid rgba(255, 42, 109, 0.4);
@@ -384,25 +376,19 @@ h1 {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .app {
-    padding: 12px 16px;
-    row-gap: 12px;
-  }
-
   .topbar {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
-    padding: 16px;
+    padding: 12px 16px;
   }
 
   .actions {
     justify-content: space-between;
   }
 
-  .viewer {
-    max-height: calc(100vh - 240px);
-    border-radius: 16px;
+  .footer {
+    padding: 12px 16px;
   }
 
   .feedback-badge {
