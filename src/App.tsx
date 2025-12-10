@@ -205,12 +205,6 @@ function App() {
             <span className="value">{statusText}</span>
           </div>
           <div className="pill">
-            <span className="label">Countdown</span>
-            <span className="value">
-              {gameState === 'countdown' ? `${countdown}s` : '—'}
-            </span>
-          </div>
-          <div className="pill">
             <span className="label">Fit</span>
             <span className={`value ${fitResult?.pass ? 'positive' : ''}`}>
               {fitResult ? `${Math.round(fitResult.insideRatio * 100)}%` : '—'}

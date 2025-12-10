@@ -47,6 +47,12 @@ export function VideoOverlay({
     <div className="viewer">
       <video ref={videoRef} className="video" autoPlay playsInline muted />
       <canvas ref={canvasRef} className="overlay" />
+      <div className="countdown-badge">
+        <span className="clock-icon" aria-hidden />
+        <span className="value">
+          {gameState === 'countdown' ? `${countdown}s` : '...'}
+        </span>
+      </div>
     </div>
   )
 }
