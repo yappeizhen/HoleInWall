@@ -169,12 +169,12 @@ function makeFlippedL(): ShapeConfig {
     name: 'Flipped L',
     kind: 'polygon',
     points: [
-      { x: 0.25, y: top },
-      { x: 0.55, y: top },
-      { x: 0.55, y: footBottom },
-      { x: 0.4, y: footBottom },
-      { x: 0.4, y: bottom },
-      { x: 0.25, y: bottom },
+      { x: 0.75, y: top },
+      { x: 0.45, y: top },
+      { x: 0.45, y: footBottom },
+      { x: 0.60, y: footBottom },
+      { x: 0.60, y: bottom },
+      { x: 0.75, y: bottom },
     ],
   }
 }
