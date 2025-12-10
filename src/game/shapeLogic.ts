@@ -83,7 +83,7 @@ function makeTallRect(): ShapeConfig {
     name: 'Tall Rectangle',
     kind: 'rect',
     center: { x: 0.5, y: FLOOR_Y - 0.3 },
-    width: 0.2,
+    width: 0.12,
     height: 0.8,
     cornerRadius: 0,
   }
@@ -134,12 +134,11 @@ function makeBubbleY(): ShapeConfig {
 
 function makeBubbleF(): ShapeConfig {
   const top = 0.26
-  const mid = 0.48
-  const low = 0.7
-  const bar = 0.09
+  const mid = 0.55
+  const bar = 0.11
   const left = 0.32
   const stemRight = 0.44
-  const topBarRight = 0.70
+  const topBarRight = 0.60
   const midBarRight = 0.60
   const bottom = FLOOR_Y
   return {
@@ -155,12 +154,8 @@ function makeBubbleF(): ShapeConfig {
       { x: midBarRight, y: mid - bar / 2 },
       { x: midBarRight, y: mid + bar / 2 },// mid bar thickness
       { x: stemRight, y: mid + bar / 2 },
-      { x: stemRight, y: low },            // down to lower junction
-      { x: left, y: low },                 // across to stem left
-      { x: left, y: bottom },              // drop to floor
-      { x: stemRight, y: bottom },         // short foot along floor
-      { x: stemRight, y: low },            // back up to avoid closing bottom
-      { x: left, y: low },                 // return to stem left
+      { x: stemRight, y: bottom },         // down to floor
+      { x: left, y: bottom },              // floor contact (bottom stays open)
     ],
   }
 }
