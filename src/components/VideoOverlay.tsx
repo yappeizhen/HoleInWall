@@ -190,12 +190,25 @@ function drawPolygon(
 ) {
   if (points.length < 3) return
   const scaled = points.map((p) => ({ x: p.x * width, y: p.y * height }))
+  const floorNorm = 0.95
   ctx.beginPath()
   ctx.moveTo(scaled[0].x, scaled[0].y)
   for (let i = 1; i < scaled.length; i++) {
-    ctx.lineTo(scaled[i].x, scaled[i].y)
+    const prev = points[i - 1]
+    const curr = points[i]
+    const skipBottom = prev.y >= floorNorm && curr.y >= floorNorm
+    if (skipBottom) {
+      ctx.moveTo(scaled[i].x, scaled[i].y)
+    } else {
+      ctx.lineTo(scaled[i].x, scaled[i].y)
+    }
   }
-  ctx.closePath()
+  const last = points[points.length - 1]
+  const first = points[0]
+  const skipClose = last.y >= floorNorm && first.y >= floorNorm
+  if (!skipClose) {
+    ctx.lineTo(scaled[0].x, scaled[0].y)
+  }
 }
 
 function drawCurveBand(

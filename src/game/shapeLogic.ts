@@ -51,7 +51,7 @@ export interface FitResult {
   total: number
 }
 
-const FLOOR_Y = 0.9
+const FLOOR_Y = 0.95
 
 export function getDefaultShapes(): ShapeConfig[] {
   return [
@@ -84,7 +84,7 @@ function makeTallRect(): ShapeConfig {
     id: 'door-rect',
     name: 'Tall Rectangle',
     kind: 'rect',
-    center: { x: 0.5, y: 0.78 },
+    center: { x: 0.5, y: FLOOR_Y - 0.3 },
     width: 0.44,
     height: 0.6,
     cornerRadius: 0,
@@ -96,7 +96,7 @@ function makeThinRect(): ShapeConfig {
     id: 'rectangle-thin',
     name: 'Thin Rectangle (Tall)',
     kind: 'rect',
-    center: { x: 0.5, y: 0.8 },
+    center: { x: 0.5, y: FLOOR_Y - 0.09 },
     width: 0.35,
     height: 0.18,
     cornerRadius: 0,
@@ -175,7 +175,7 @@ function makeSuperThin(): ShapeConfig {
     id: 'shape-thin-rect',
     name: 'Super Thin Rect',
     kind: 'rect',
-    center: { x: 0.5, y: 0.82 },
+    center: { x: 0.5, y: FLOOR_Y - 0.07 },
     width: 0.36,
     height: 0.14,
     cornerRadius: 0,
